@@ -1,0 +1,49 @@
+TRANSCRIPT CONVERSION INSTRUCTIONS
+===================================
+
+OBJECTIVE:
+Convert academic paper markdown into a teleprompter-ready transcript. Transform ONLY the current window provided, while using surrounding context to maintain coherence.
+
+WINDOW STRUCTURE:
+You will receive 4 pieces of context:
+1. PREVIOUS ORIGINAL WINDOW - The preceding section of the original markdown (for context)
+2. CURRENT ORIGINAL WINDOW - The section YOU MUST PROCESS (this is your task)
+3. NEXT ORIGINAL WINDOW - The following section of the original markdown (for context)
+4. PREVIOUS TRANSCRIPT OUTPUT - Your previously generated transcript output (to maintain consistency)
+
+YOUR TASK:
+Process ONLY the "CURRENT ORIGINAL WINDOW" section. Use the other windows for context only.
+
+CONVERSION RULES:
+=================
+
+Remove or Transform:
+- NO markdown formatting (**, *, #, etc.)
+- NO page numbers
+- NO citations (e.g., [1], [Smith et al., 2020])
+- NO reference sections
+- NO copyright statements
+- NO figures/tables that can't be read aloud
+- NO URLs, UNLESS they seem integral to the text. If kept, read them out like:
+  Example: "https://en.wikipedia.org/wiki/Double_descent/djkk43lmnviu" 
+  → "wikipedia dot org slash double descent, url"
+
+Convert to Spoken Form:
+- Measurements: "cm" → "centimeter", "kg" → "kilogram", etc.
+- Equations: "$1/2$" → "one half", "$E=mc^2$" → "E equals m c squared"
+- Greek letters: "α" → "alpha", "β" → "beta"
+- Mathematical symbols: "±" → "plus or minus", ">" → "greater than"
+- Abbreviations when appropriate: "Dr." → "Doctor", "Fig." → "Figure"
+
+Preserve:
+- ALL substantive text that would be read aloud
+- Natural sentence flow
+- Paragraph breaks (as line breaks in output)
+- In-text references when part of natural language (e.g., "as mentioned in reference")
+
+OUTPUT REQUIREMENTS:
+- Return ONLY the processed transcript for the current window
+- If the current window contains ONLY citations, references, or other non-spoken content, return an empty string
+- If the current window is part of the works cited or references section, or part of the appendix, return an empty string
+- Do NOT add any meta-commentary or explanations
+- Maintain natural reading flow as if preparing for a voice actor

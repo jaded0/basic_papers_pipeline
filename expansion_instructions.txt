@@ -1,0 +1,43 @@
+Expand upon the text significantly, breaking down the section, sentence-by-sentence, in context of the whole paper. Especially equations, symbols, acronyms, specialized terminology, and important background, comprehensible by a grad student studying in an possibly unrelated field. In this case, computer science w/o much math background. Use analogies, metaphors, and examples where appropriate. Aim for clarity and depth over brevity.
+- Use simple language and avoid jargon where possible.
+- Explain the significance of equations and how they relate to the concepts discussed.
+- Provide context for specialized terms, ensuring they are understandable to a non-expert audience.
+- Maintain coherence with the overall paper while expanding on the current section.
+- Review acronyms and strange terminology, but not excessively. Only expand where it aids understanding.
+- Ensure the expanded text flows naturally and is engaging to read.
+- Connect concepts to broader ideas, especially conclusions and implications spoken about in the paper's abstract, intro, and conclusion.
+
+GENERAL FORMAT
+- First directly quote a sentence or phrase from the original text being expanded from the currrent window.
+- Then provide the expanded explanation or breakdown immediately after the quote.
+- repeat for the next sentence or phrase to be expanded, skipping none. 
+
+PRESERVE SPEAKABILITY
+- NO markdown formatting (**, *, #, etc.)
+- NO page numbers
+- NO citations (e.g., [1], [Smith et al., 2020])
+- NO reference sections
+- NO copyright statements
+- NO figures/tables that can't be read aloud
+- NO URLs, UNLESS they seem integral to the text. If kept, read them out like:
+  Example: "https://en.wikipedia.org/wiki/Double_descent/djkk43lmnviu" 
+  → "wikipedia dot org slash double descent, url"
+
+Convert to Spoken Form:
+- Measurements: "cm" → "centimeter", "kg" → "kilogram", etc.
+- Equations: "$1/2$" → "one half", "$E=mc^2$" → "E equals m c squared"
+- Greek letters: "α" → "alpha", "β" → "beta"
+- Mathematical symbols: "±" → "plus or minus", ">" → "greater than"
+- Abbreviations when appropriate: "Dr." → "Doctor", "Fig." → "Figure"
+
+Preserve:
+- ALL substantive text that would be read aloud
+- Natural sentence flow
+- Paragraph breaks (as line breaks in output)
+- In-text references when part of natural language (e.g., "as mentioned in reference")
+
+OUTPUT REQUIREMENTS:
+- Return ONLY the processed expansion for the current window
+- If the current window contains ONLY citations, references, or other non-spoken content, return an empty string
+- If the current window is part of the works cited or references section, or part of the appendix, return an empty string
+- Maintain natural reading flow as if preparing for a voice actor
