@@ -43,6 +43,7 @@ OUTPUT REQUIREMENTS:
 - If the current window contains ONLY citations, references, or other non-spoken content, return an empty string
 - If the current window is part of the works cited or references section, or part of the appendix, return an empty string
 - Maintain natural reading flow as if preparing for a voice actor
+- Do NOT exclude any substantive text from the quotations, including math or equations; expand them to spoken form instead.
 
 CONCISENESS:
 - Take into account explanations already provided in previous windows to avoid redundancy, but do not hesitate to re-explain crucial concepts for clarity.
