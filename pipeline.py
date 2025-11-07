@@ -27,10 +27,10 @@ TRANSCRIPT_WINDOW_SIZE = 50
 EXPANSION_WINDOW_SIZE = 10
 
 # Input PDF path
-INPUT_PDF = "/home/jaden/Documents/brain/neuro_601_papers/student_pres/microglia.pdf"
+INPUT_PDF = "/home/jaden/Documents/brain/papers/spikeNNsFreq.pdf"
 
 # Output directory (where markdown subdirectory will be created)
-OUTPUT_DIR = "/home/jaden/Documents/brain/neuro_601_papers/student_pres/markdowned"
+OUTPUT_DIR = "/home/jaden/Documents/brain/papers/markdowned"
 
 # ============= PIPELINE =============
 

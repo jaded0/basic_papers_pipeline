@@ -37,6 +37,7 @@ Convert to Spoken Form:
 
 Preserve:
 - ALL substantive text that would be read aloud
+- Absolutely all of the math, equations, symbols, written out in spoken form in their entirety. 
 - Natural sentence flow
 - Paragraph breaks (as line breaks in output)
 - In-text references when part of natural language (e.g., "as mentioned in reference")
@@ -47,3 +48,4 @@ OUTPUT REQUIREMENTS:
 - If the current window is part of the works cited or references section, or part of the appendix, return an empty string
 - Do NOT add any meta-commentary or explanations
 - Maintain natural reading flow as if preparing for a voice actor
+- Do NOT exclude math or equations; convert them to spoken form instead
