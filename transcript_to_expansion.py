@@ -34,9 +34,9 @@ def split_into_windows(lines, window_size):
     return windows
 
 
-def process_window(client, instructions, full_transcript, curr_window, prev_expansion):
+def process_window(client, instructions, full_transcript, curr_window, prev_expansion, model="anthropic/claude-haiku-4.5"):
     """
-    Process a single window using Claude Haiku 4.5.
+    Process a single window using Claude API.
     
     Args:
         client: OpenAI client configured for OpenRouter
@@ -44,6 +44,7 @@ def process_window(client, instructions, full_transcript, curr_window, prev_expa
         full_transcript: The complete original transcript for context
         curr_window: Current window lines (to be expanded)
         prev_expansion: Previously generated expansion
+        model: Model identifier for OpenRouter (default: anthropic/claude-haiku-4.5)
     
     Returns:
         Expanded text for the current window
@@ -86,7 +87,7 @@ Return ONLY the expanded text, nothing else.
             "HTTP-Referer": "https://github.com/jaden",
             "X-Title": "Academic Paper Expansion Pipeline",
         },
-        model="anthropic/claude-haiku-4.5",
+        model=model,
         messages=[
             {
                 "role": "user",
@@ -98,7 +99,7 @@ Return ONLY the expanded text, nothing else.
     return completion.choices[0].message.content
 
 
-def convert_transcript_to_expansion(transcript_path, output_path, window_size=3):
+def convert_transcript_to_expansion(transcript_path, output_path, window_size=3, model="anthropic/claude-haiku-4.5"):
     """
     Convert a transcript file to an expanded version using sliding windows.
     
@@ -106,6 +107,7 @@ def convert_transcript_to_expansion(transcript_path, output_path, window_size=3)
         transcript_path: Path to the input transcript file
         output_path: Path to save the expansion
         window_size: Number of lines per window (default: 3)
+        model: Model identifier for OpenRouter (default: anthropic/claude-haiku-4.5)
     """
     print(f"Loading transcript from: {transcript_path}")
     
@@ -148,7 +150,7 @@ def convert_transcript_to_expansion(transcript_path, output_path, window_size=3)
         
         # Process this window
         window_expansion = process_window(
-            client, instructions, full_transcript, curr_window, prev_expansion
+            client, instructions, full_transcript, curr_window, prev_expansion, model
         )
         
         # Store the result

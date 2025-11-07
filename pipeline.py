@@ -15,14 +15,19 @@ import subprocess
 
 # ============= CONFIGURATION =============
 
+# Model choices (OpenRouter model identifiers)
+# Default: Claude Haiku 4.5 for both steps
+TRANSCRIPT_MODEL = "anthropic/claude-haiku-4.5"
+EXPANSION_MODEL = "moonshotai/kimi-k2-thinking"
+
 # Window size for transcript processing (number of lines per window)
 TRANSCRIPT_WINDOW_SIZE = 50
 
 # Window size for expansion processing (number of lines per window)
-EXPANSION_WINDOW_SIZE = 3
+EXPANSION_WINDOW_SIZE = 10
 
 # Input PDF path
-INPUT_PDF = "/home/jaden/Documents/brain/neuro_601_papers/student_pres/schoknecht-et-al-2025-spreading-depolarizations-exhaust-neuronal-atp-in-a-model-of-cerebral-ischemia.pdf"
+INPUT_PDF = "/home/jaden/Documents/brain/neuro_601_papers/student_pres/microglia.pdf"
 
 # Output directory (where markdown subdirectory will be created)
 OUTPUT_DIR = "/home/jaden/Documents/brain/neuro_601_papers/student_pres/markdowned"
@@ -70,7 +75,7 @@ def run_pdf_to_markdown():
     return True
 
 
-def run_markdown_to_transcript(markdown_path, transcript_path, window_size):
+def run_markdown_to_transcript(markdown_path, transcript_path, window_size, model):
     """Run the Markdown to Transcript conversion."""
     print("\n" + "="*80)
     print("STEP 2: Converting Markdown to Transcript")
@@ -79,12 +84,12 @@ def run_markdown_to_transcript(markdown_path, transcript_path, window_size):
     # Import the function from markdown_to_transcript module
     from markdown_to_transcript import convert_markdown_to_transcript
     
-    convert_markdown_to_transcript(markdown_path, transcript_path, window_size)
+    convert_markdown_to_transcript(markdown_path, transcript_path, window_size, model)
     
     return True
 
 
-def run_transcript_to_expansion(transcript_path, expansion_path, window_size):
+def run_transcript_to_expansion(transcript_path, expansion_path, window_size, model):
     """Run the Transcript to Expansion conversion."""
     print("\n" + "="*80)
     print("STEP 3: Converting Transcript to Expansion")
@@ -93,7 +98,7 @@ def run_transcript_to_expansion(transcript_path, expansion_path, window_size):
     # Import the function from transcript_to_expansion module
     from transcript_to_expansion import convert_transcript_to_expansion
     
-    convert_transcript_to_expansion(transcript_path, expansion_path, window_size)
+    convert_transcript_to_expansion(transcript_path, expansion_path, window_size, model)
     
     return True
 
@@ -106,7 +111,9 @@ def main():
     print(f"\nConfiguration:")
     print(f"  Input PDF: {INPUT_PDF}")
     print(f"  Output Dir: {OUTPUT_DIR}")
+    print(f"  Transcript Model: {TRANSCRIPT_MODEL}")
     print(f"  Transcript Window Size: {TRANSCRIPT_WINDOW_SIZE} lines")
+    print(f"  Expansion Model: {EXPANSION_MODEL}")
     print(f"  Expansion Window Size: {EXPANSION_WINDOW_SIZE} lines")
     
     # Check if PDF exists
@@ -139,7 +146,7 @@ def main():
         print("\n✓ Transcript file already exists, skipping transcript conversion")
     else:
         print("\n→ Transcript file not found, will convert markdown")
-        run_markdown_to_transcript(markdown_path, transcript_path, TRANSCRIPT_WINDOW_SIZE)
+        run_markdown_to_transcript(markdown_path, transcript_path, TRANSCRIPT_WINDOW_SIZE, TRANSCRIPT_MODEL)
         
         # Verify transcript was created
         if not check_file_exists(transcript_path):
@@ -151,7 +158,7 @@ def main():
         print("\n✓ Expansion file already exists, skipping expansion conversion")
     else:
         print("\n→ Expansion file not found, will convert transcript")
-        run_transcript_to_expansion(transcript_path, expansion_path, EXPANSION_WINDOW_SIZE)
+        run_transcript_to_expansion(transcript_path, expansion_path, EXPANSION_WINDOW_SIZE, EXPANSION_MODEL)
         
         # Verify expansion was created
         if not check_file_exists(expansion_path):

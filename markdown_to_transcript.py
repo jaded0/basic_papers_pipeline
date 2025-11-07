@@ -46,9 +46,9 @@ def get_window_context(windows, current_idx):
     return prev_window, current_window, next_window
 
 
-def process_window(client, instructions, prev_orig, curr_orig, next_orig, prev_transcript):
+def process_window(client, instructions, prev_orig, curr_orig, next_orig, prev_transcript, model="anthropic/claude-haiku-4.5"):
     """
-    Process a single window using Claude Haiku 4.5.
+    Process a single window using Claude API.
     
     Args:
         client: OpenAI client configured for OpenRouter
@@ -57,6 +57,7 @@ def process_window(client, instructions, prev_orig, curr_orig, next_orig, prev_t
         curr_orig: Current original window lines (to be processed)
         next_orig: Next original window lines
         prev_transcript: Previously generated transcript
+        model: Model identifier for OpenRouter (default: anthropic/claude-haiku-4.5)
     
     Returns:
         Transcript text for the current window
@@ -100,7 +101,7 @@ Return ONLY the transcript text, nothing else.
             "HTTP-Referer": "https://github.com/jaden",
             "X-Title": "Academic Paper Transcript Pipeline",
         },
-        model="anthropic/claude-haiku-4.5",
+        model=model,
         messages=[
             {
                 "role": "user",
@@ -112,7 +113,7 @@ Return ONLY the transcript text, nothing else.
     return completion.choices[0].message.content
 
 
-def convert_markdown_to_transcript(markdown_path, output_path, window_size=50):
+def convert_markdown_to_transcript(markdown_path, output_path, window_size=50, model="anthropic/claude-haiku-4.5"):
     """
     Convert a markdown file to a transcript using sliding windows.
     
@@ -120,6 +121,7 @@ def convert_markdown_to_transcript(markdown_path, output_path, window_size=50):
         markdown_path: Path to the input markdown file
         output_path: Path to save the transcript
         window_size: Number of lines per window (default: 50)
+        model: Model identifier for OpenRouter (default: anthropic/claude-haiku-4.5)
     """
     print(f"Loading markdown from: {markdown_path}")
     
@@ -158,7 +160,7 @@ def convert_markdown_to_transcript(markdown_path, output_path, window_size=50):
         
         # Process this window
         window_transcript = process_window(
-            client, instructions, prev_orig, curr_orig, next_orig, prev_transcript
+            client, instructions, prev_orig, curr_orig, next_orig, prev_transcript, model
         )
         
         # Store the result

@@ -27,7 +27,7 @@ Convert to Spoken Form:
 - Measurements: "cm" → "centimeter", "kg" → "kilogram", etc.
 - Equations: "$1/2$" → "one half", "$E=mc^2$" → "E equals m c squared"
 - Greek letters: "α" → "alpha", "β" → "beta"
-- Mathematical symbols: "±" → "plus or minus", ">" → "greater than"
+- Mathematical symbols: "±" → "plus or minus", ">" → "greater than", "512 × 512" → "five twelve by five twelve"
 - Abbreviations when appropriate: "Dr." → "Doctor", "Fig." → "Figure"
 
 Preserve:
@@ -41,3 +41,9 @@ OUTPUT REQUIREMENTS:
 - If the current window contains ONLY citations, references, or other non-spoken content, return an empty string
 - If the current window is part of the works cited or references section, or part of the appendix, return an empty string
 - Maintain natural reading flow as if preparing for a voice actor
+
+CONCISENESS:
+- Take into account explanations already provided in previous windows to avoid redundancy, but do not hesitate to re-explain crucial concepts for clarity.
+- Any repeating explanations are justifiable if complex or crucial to the main ideas of the paper.
+- Conceptually simple phrases or sentences can be left unexpanded, lumped into the quotation along with more complex parts and left unaddressed in the expansion.
+- If an explanation for multiple sentences is highly interconnected, feel free to quote them together and provide a single, cohesive expansion. Atomic, brief comments are preferred where sufficient, however, for understanding by a CS grad student.

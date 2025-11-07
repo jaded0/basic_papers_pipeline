@@ -32,7 +32,7 @@ Convert to Spoken Form:
 - Measurements: "cm" → "centimeter", "kg" → "kilogram", etc.
 - Equations: "$1/2$" → "one half", "$E=mc^2$" → "E equals m c squared"
 - Greek letters: "α" → "alpha", "β" → "beta"
-- Mathematical symbols: "±" → "plus or minus", ">" → "greater than"
+- Mathematical symbols: "±" → "plus or minus", ">" → "greater than", "512 × 512" → "five twelve by five twelve"
 - Abbreviations when appropriate: "Dr." → "Doctor", "Fig." → "Figure"
 
 Preserve:
