@@ -11,12 +11,12 @@ This pipeline:
 
 import os
 import sys
-import subprocess
 
 # ============= CONFIGURATION =============
 
 # Model choices (OpenRouter model identifiers)
-# Default: Claude Haiku 4.5 for both steps
+# Default: Claude Haiku 4.5 for all steps
+PDF_TO_MARKDOWN_MODEL = "anthropic/claude-haiku-4.5"
 TRANSCRIPT_MODEL = "anthropic/claude-haiku-4.5"
 EXPANSION_MODEL = "moonshotai/kimi-k2-thinking"
 
@@ -56,21 +56,16 @@ def get_expected_paths(pdf_path, output_dir):
     return markdown_path, transcript_path, expansion_path, output_subdir
 
 
-def run_pdf_to_markdown():
-    """Run the PDF to Markdown conversion script."""
+def run_pdf_to_markdown(pdf_path, output_dir, model):
+    """Run the PDF to Markdown conversion."""
     print("\n" + "="*80)
     print("STEP 1: Converting PDF to Markdown")
     print("="*80)
     
-    result = subprocess.run(
-        [sys.executable, "convert_pdf_to_markdown.py"],
-        capture_output=False,
-        text=True
-    )
+    # Import the function from convert_pdf_to_markdown module
+    from convert_pdf_to_markdown import convert_pdf_to_markdown
     
-    if result.returncode != 0:
-        print("❌ PDF to Markdown conversion failed!")
-        sys.exit(1)
+    convert_pdf_to_markdown(pdf_path, output_dir, model)
     
     return True
 
@@ -111,6 +106,7 @@ def main():
     print(f"\nConfiguration:")
     print(f"  Input PDF: {INPUT_PDF}")
     print(f"  Output Dir: {OUTPUT_DIR}")
+    print(f"  PDF to Markdown Model: {PDF_TO_MARKDOWN_MODEL}")
     print(f"  Transcript Model: {TRANSCRIPT_MODEL}")
     print(f"  Transcript Window Size: {TRANSCRIPT_WINDOW_SIZE} lines")
     print(f"  Expansion Model: {EXPANSION_MODEL}")
@@ -134,7 +130,7 @@ def main():
         print("\n✓ Markdown file already exists, skipping PDF conversion")
     else:
         print("\n→ Markdown file not found, will convert PDF")
-        run_pdf_to_markdown()
+        run_pdf_to_markdown(INPUT_PDF, OUTPUT_DIR, PDF_TO_MARKDOWN_MODEL)
         
         # Verify markdown was created
         if not check_file_exists(markdown_path):

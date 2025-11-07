@@ -8,7 +8,9 @@ Expand upon the text significantly, breaking down the section, sentence-by-sente
 - Connect concepts to broader ideas, especially conclusions and implications spoken about in the paper's abstract, intro, and conclusion.
 
 GENERAL FORMAT
-- First directly quote a sentence or phrase from the original text being expanded from the currrent window.
+- First determine whether the sentence is important enough to expand upon for clarity. If not, include it as-is in the quotation.
+- If it is important, break it down.
+- Directly quote the sentence or phrase from the original text being expanded from the currrent window.
 - Then provide the expanded explanation or breakdown immediately after the quote.
 - repeat for the next sentence or phrase to be expanded, skipping none. 
 
