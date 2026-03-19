@@ -24,13 +24,13 @@ EXPANSION_MODEL = "moonshotai/kimi-k2-thinking"
 TRANSCRIPT_WINDOW_SIZE = 50
 
 # Window size for expansion processing (number of lines per window)
-EXPANSION_WINDOW_SIZE = 10
+EXPANSION_WINDOW_SIZE = 50
 
 # Input PDF path
-INPUT_PDF = "/home/jaden/Documents/brain/papers/spikeNNsFreq.pdf"
+INPUT_PDF = "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap08.pdf"
 
 # Output directory (where markdown subdirectory will be created)
-OUTPUT_DIR = "/home/jaden/Documents/brain/papers/markdowned"
+OUTPUT_DIR = "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/markdowned"
 
 # ============= PIPELINE =============
 
