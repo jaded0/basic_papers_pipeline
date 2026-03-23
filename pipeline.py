@@ -18,16 +18,23 @@ import sys
 # Default: Claude Haiku 4.5 for all steps
 PDF_TO_MARKDOWN_MODEL = "anthropic/claude-haiku-4.5"
 TRANSCRIPT_MODEL = "anthropic/claude-haiku-4.5"
-EXPANSION_MODEL = "moonshotai/kimi-k2-thinking"
+EXPANSION_MODEL = "moonshotai/kimi-k2.5"
 
 # Window size for transcript processing (number of lines per window)
 TRANSCRIPT_WINDOW_SIZE = 50
 
 # Window size for expansion processing (number of lines per window)
-EXPANSION_WINDOW_SIZE = 50
+EXPANSION_WINDOW_SIZE = 100
+
+# Reasoning token configuration for expansion model
+# NOTE: OpenRouter only allows ONE of effort or max_tokens, not both.
+# Set the one you want to use, and leave the other as None.
+EXPANSION_REASONING_EFFORT = "high"       # "xhigh", "high", "medium", "low", "minimal", or "none" (or None to disable)
+# EXPANSION_REASONING_MAX_TOKENS = 16000  # Max tokens allocated for reasoning (or None to disable)
+EXPANSION_REASONING_MAX_TOKENS = None
 
 # Input PDF path
-INPUT_PDF = "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap08.pdf"
+INPUT_PDF = "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap22.pdf"
 
 # Output directory (where markdown subdirectory will be created)
 OUTPUT_DIR = "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/markdowned"
@@ -84,7 +91,7 @@ def run_markdown_to_transcript(markdown_path, transcript_path, window_size, mode
     return True
 
 
-def run_transcript_to_expansion(transcript_path, expansion_path, window_size, model):
+def run_transcript_to_expansion(transcript_path, expansion_path, window_size, model, reasoning_effort=None, reasoning_max_tokens=None):
     """Run the Transcript to Expansion conversion."""
     print("\n" + "="*80)
     print("STEP 3: Converting Transcript to Expansion")
@@ -93,7 +100,7 @@ def run_transcript_to_expansion(transcript_path, expansion_path, window_size, mo
     # Import the function from transcript_to_expansion module
     from transcript_to_expansion import convert_transcript_to_expansion
     
-    convert_transcript_to_expansion(transcript_path, expansion_path, window_size, model)
+    convert_transcript_to_expansion(transcript_path, expansion_path, window_size, model, reasoning_effort=reasoning_effort, reasoning_max_tokens=reasoning_max_tokens)
     
     return True
 
@@ -111,6 +118,8 @@ def main():
     print(f"  Transcript Window Size: {TRANSCRIPT_WINDOW_SIZE} lines")
     print(f"  Expansion Model: {EXPANSION_MODEL}")
     print(f"  Expansion Window Size: {EXPANSION_WINDOW_SIZE} lines")
+    print(f"  Expansion Reasoning Effort: {EXPANSION_REASONING_EFFORT}")
+    print(f"  Expansion Reasoning Max Tokens: {EXPANSION_REASONING_MAX_TOKENS}")
     
     # Check if PDF exists
     if not check_file_exists(INPUT_PDF):
@@ -154,7 +163,7 @@ def main():
         print("\n✓ Expansion file already exists, skipping expansion conversion")
     else:
         print("\n→ Expansion file not found, will convert transcript")
-        run_transcript_to_expansion(transcript_path, expansion_path, EXPANSION_WINDOW_SIZE, EXPANSION_MODEL)
+        run_transcript_to_expansion(transcript_path, expansion_path, EXPANSION_WINDOW_SIZE, EXPANSION_MODEL, EXPANSION_REASONING_EFFORT, EXPANSION_REASONING_MAX_TOKENS)
         
         # Verify expansion was created
         if not check_file_exists(expansion_path):

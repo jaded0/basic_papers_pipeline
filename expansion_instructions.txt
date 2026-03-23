@@ -7,6 +7,11 @@ Expand upon the text significantly, breaking down the section, sentence-by-sente
 - Ensure the expanded text flows naturally and is engaging to read.
 - Connect concepts to broader ideas, especially conclusions and implications spoken about in the paper's abstract, intro, and conclusion.
 
+DO NOT PRESERVE:
+- Exercises in the exercises sections at the end, if present.
+- Appendix sections, unless they contain crucial information for understanding the main text.
+- Any content that is not meant to be read aloud, such as tables, figures, or citations, unless they are integral to the understanding of the text and can be read in a way that is clear and engaging.
+
 GENERAL FORMAT
 - First determine whether the sentence is important enough to expand upon for clarity. If not, include it as-is in the quotation.
 - If it is important, break it down.

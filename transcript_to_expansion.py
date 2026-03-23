@@ -34,7 +34,7 @@ def split_into_windows(lines, window_size):
     return windows
 
 
-def process_window(client, instructions, full_transcript, curr_window, prev_expansion, model="anthropic/claude-haiku-4.5"):
+def process_window(client, instructions, full_transcript, curr_window, prev_expansion, model="anthropic/claude-haiku-4.5", reasoning_effort=None, reasoning_max_tokens=None):
     """
     Process a single window using Claude API.
     
@@ -45,6 +45,8 @@ def process_window(client, instructions, full_transcript, curr_window, prev_expa
         curr_window: Current window lines (to be expanded)
         prev_expansion: Previously generated expansion
         model: Model identifier for OpenRouter (default: anthropic/claude-haiku-4.5)
+        reasoning_effort: Reasoning effort level, or None to use max_tokens instead
+        reasoning_max_tokens: Max tokens for reasoning, or None to use effort instead
     
     Returns:
         Expanded text for the current window
@@ -82,6 +84,17 @@ Quote each sentence/phrase, then provide the expansion.
 Return ONLY the expanded text, nothing else.
 """
 
+    # Build reasoning config (only include non-None params; OpenRouter requires only one of effort/max_tokens)
+    reasoning_config = {}
+    if reasoning_effort is not None:
+        reasoning_config["effort"] = reasoning_effort
+    if reasoning_max_tokens is not None:
+        reasoning_config["max_tokens"] = reasoning_max_tokens
+
+    extra_body = {}
+    if reasoning_config:
+        extra_body["reasoning"] = reasoning_config
+
     completion = client.chat.completions.create(
         extra_headers={
             "HTTP-Referer": "https://github.com/jaden",
@@ -93,13 +106,14 @@ Return ONLY the expanded text, nothing else.
                 "role": "user",
                 "content": prompt
             }
-        ]
+        ],
+        extra_body=extra_body,
     )
     
     return completion.choices[0].message.content
 
 
-def convert_transcript_to_expansion(transcript_path, output_path, window_size=3, model="anthropic/claude-haiku-4.5"):
+def convert_transcript_to_expansion(transcript_path, output_path, window_size=3, model="anthropic/claude-haiku-4.5", reasoning_effort=None, reasoning_max_tokens=None):
     """
     Convert a transcript file to an expanded version using sliding windows.
     
@@ -108,6 +122,8 @@ def convert_transcript_to_expansion(transcript_path, output_path, window_size=3,
         output_path: Path to save the expansion
         window_size: Number of lines per window (default: 3)
         model: Model identifier for OpenRouter (default: anthropic/claude-haiku-4.5)
+        reasoning_effort: Reasoning effort level (default: "high")
+        reasoning_max_tokens: Max tokens for reasoning (default: 16000)
     """
     print(f"Loading transcript from: {transcript_path}")
     
@@ -150,7 +166,8 @@ def convert_transcript_to_expansion(transcript_path, output_path, window_size=3,
         
         # Process this window
         window_expansion = process_window(
-            client, instructions, full_transcript, curr_window, prev_expansion, model
+            client, instructions, full_transcript, curr_window, prev_expansion, model,
+            reasoning_effort=reasoning_effort, reasoning_max_tokens=reasoning_max_tokens
         )
         
         # Store the result
