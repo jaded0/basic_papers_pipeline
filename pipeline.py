@@ -11,33 +11,38 @@ This pipeline:
 
 import os
 import sys
+import yaml
 
 # ============= CONFIGURATION =============
 
-# Model choices (OpenRouter model identifiers)
-# Default: Claude Haiku 4.5 for all steps
-PDF_TO_MARKDOWN_MODEL = "anthropic/claude-haiku-4.5"
-TRANSCRIPT_MODEL = "anthropic/claude-haiku-4.5"
-EXPANSION_MODEL = "moonshotai/kimi-k2.5"
+DEFAULT_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.yaml")
 
-# Window size for transcript processing (number of lines per window)
-TRANSCRIPT_WINDOW_SIZE = 50
+def load_config(config_path=DEFAULT_CONFIG_PATH):
+    """Load configuration from a YAML file."""
+    with open(config_path, "r") as f:
+        cfg = yaml.safe_load(f)
+    return cfg
 
-# Window size for expansion processing (number of lines per window)
-EXPANSION_WINDOW_SIZE = 100
+cfg = load_config()
 
-# Reasoning token configuration for expansion model
-# NOTE: OpenRouter only allows ONE of effort or max_tokens, not both.
-# Set the one you want to use, and leave the other as None.
-EXPANSION_REASONING_EFFORT = "high"       # "xhigh", "high", "medium", "low", "minimal", or "none" (or None to disable)
-# EXPANSION_REASONING_MAX_TOKENS = 16000  # Max tokens allocated for reasoning (or None to disable)
-EXPANSION_REASONING_MAX_TOKENS = None
+PDF_TO_MARKDOWN_MODEL       = cfg.get("pdf_to_markdown_model", "anthropic/claude-haiku-4.5")
+TRANSCRIPT_MODEL            = cfg.get("transcript_model", "anthropic/claude-haiku-4.5")
+EXPANSION_MODEL             = cfg.get("expansion_model", "anthropic/claude-haiku-4.5")
+TRANSCRIPT_WINDOW_SIZE      = cfg.get("transcript_window_size", 50)
+EXPANSION_WINDOW_SIZE       = cfg.get("expansion_window_size", 100)
+EXPANSION_REASONING_EFFORT  = cfg.get("expansion_reasoning_effort", None)
+EXPANSION_REASONING_MAX_TOKENS = cfg.get("expansion_reasoning_max_tokens", None)
+OUTPUT_DIR                  = cfg["output_dir"]
 
-# Input PDF path
-INPUT_PDF = "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap22.pdf"
-
-# Output directory (where markdown subdirectory will be created)
-OUTPUT_DIR = "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/markdowned"
+# Build the list of PDFs to process.
+# `input_pdfs` (list) takes precedence over `input_pdf` (single string).
+if cfg.get("input_pdfs"):
+    INPUT_PDFS = list(cfg["input_pdfs"])
+elif cfg.get("input_pdf"):
+    INPUT_PDFS = [cfg["input_pdf"]]
+else:
+    print("❌ Error: config.yaml must define either `input_pdfs` or `input_pdf`.")
+    sys.exit(1)
 
 # ============= PIPELINE =============
 
@@ -105,80 +110,109 @@ def run_transcript_to_expansion(transcript_path, expansion_path, window_size, mo
     return True
 
 
+def process_single_pdf(input_pdf):
+    """
+    Run the full pipeline for a single PDF.
+    Returns True on success, False on failure (never raises).
+    """
+    import traceback
+
+    print(f"\n  Input PDF : {input_pdf}")
+    print(f"  Output Dir: {OUTPUT_DIR}")
+
+    # Check if PDF exists
+    if not check_file_exists(input_pdf):
+        print(f"\n❌ Error: PDF file not found at {input_pdf}")
+        return False
+
+    # Get expected output paths
+    markdown_path, transcript_path, expansion_path, _ = get_expected_paths(input_pdf, OUTPUT_DIR)
+
+    print(f"\n  Expected outputs:")
+    print(f"    Markdown  : {markdown_path}")
+    print(f"    Transcript: {transcript_path}")
+    print(f"    Expansion : {expansion_path}")
+
+    try:
+        # Step 1: PDF to Markdown
+        if check_file_exists(markdown_path):
+            print("\n✓ Markdown file already exists, skipping PDF conversion")
+        else:
+            print("\n→ Markdown file not found, will convert PDF")
+            run_pdf_to_markdown(input_pdf, OUTPUT_DIR, PDF_TO_MARKDOWN_MODEL)
+            if not check_file_exists(markdown_path):
+                raise RuntimeError(f"Markdown file was not created at {markdown_path}")
+
+        # Step 2: Markdown to Transcript
+        if check_file_exists(transcript_path):
+            print("\n✓ Transcript file already exists, skipping transcript conversion")
+        else:
+            print("\n→ Transcript file not found, will convert markdown")
+            run_markdown_to_transcript(markdown_path, transcript_path, TRANSCRIPT_WINDOW_SIZE, TRANSCRIPT_MODEL)
+            if not check_file_exists(transcript_path):
+                raise RuntimeError(f"Transcript file was not created at {transcript_path}")
+
+        # Step 3: Transcript to Expansion
+        if check_file_exists(expansion_path):
+            print("\n✓ Expansion file already exists, skipping expansion conversion")
+        else:
+            print("\n→ Expansion file not found, will convert transcript")
+            run_transcript_to_expansion(
+                transcript_path, expansion_path,
+                EXPANSION_WINDOW_SIZE, EXPANSION_MODEL,
+                EXPANSION_REASONING_EFFORT, EXPANSION_REASONING_MAX_TOKENS,
+            )
+            if not check_file_exists(expansion_path):
+                raise RuntimeError(f"Expansion file was not created at {expansion_path}")
+
+    except Exception:
+        print("\n❌ Error processing PDF:")
+        traceback.print_exc()
+        return False
+
+    print(f"\n✅ Done:")
+    print(f"    📄 Markdown  : {markdown_path}")
+    print(f"    🎙️  Transcript: {transcript_path}")
+    print(f"    📚 Expansion : {expansion_path}")
+    return True
+
+
 def main():
     """Main pipeline execution."""
     print("="*80)
     print("ACADEMIC PAPER PROCESSING PIPELINE")
     print("="*80)
     print(f"\nConfiguration:")
-    print(f"  Input PDF: {INPUT_PDF}")
-    print(f"  Output Dir: {OUTPUT_DIR}")
-    print(f"  PDF to Markdown Model: {PDF_TO_MARKDOWN_MODEL}")
-    print(f"  Transcript Model: {TRANSCRIPT_MODEL}")
-    print(f"  Transcript Window Size: {TRANSCRIPT_WINDOW_SIZE} lines")
-    print(f"  Expansion Model: {EXPANSION_MODEL}")
-    print(f"  Expansion Window Size: {EXPANSION_WINDOW_SIZE} lines")
-    print(f"  Expansion Reasoning Effort: {EXPANSION_REASONING_EFFORT}")
-    print(f"  Expansion Reasoning Max Tokens: {EXPANSION_REASONING_MAX_TOKENS}")
-    
-    # Check if PDF exists
-    if not check_file_exists(INPUT_PDF):
-        print(f"\n❌ Error: PDF file not found at {INPUT_PDF}")
-        sys.exit(1)
-    
-    # Get expected output paths
-    markdown_path, transcript_path, expansion_path, output_subdir = get_expected_paths(INPUT_PDF, OUTPUT_DIR)
-    
-    print(f"\nExpected outputs:")
-    print(f"  Markdown: {markdown_path}")
-    print(f"  Transcript: {transcript_path}")
-    print(f"  Expansion: {expansion_path}")
-    
-    # Step 1: PDF to Markdown
-    if check_file_exists(markdown_path):
-        print("\n✓ Markdown file already exists, skipping PDF conversion")
-    else:
-        print("\n→ Markdown file not found, will convert PDF")
-        run_pdf_to_markdown(INPUT_PDF, OUTPUT_DIR, PDF_TO_MARKDOWN_MODEL)
-        
-        # Verify markdown was created
-        if not check_file_exists(markdown_path):
-            print(f"\n❌ Error: Markdown file was not created at {markdown_path}")
-            sys.exit(1)
-    
-    # Step 2: Markdown to Transcript
-    if check_file_exists(transcript_path):
-        print("\n✓ Transcript file already exists, skipping transcript conversion")
-    else:
-        print("\n→ Transcript file not found, will convert markdown")
-        run_markdown_to_transcript(markdown_path, transcript_path, TRANSCRIPT_WINDOW_SIZE, TRANSCRIPT_MODEL)
-        
-        # Verify transcript was created
-        if not check_file_exists(transcript_path):
-            print(f"\n❌ Error: Transcript file was not created at {transcript_path}")
-            sys.exit(1)
-    
-    # Step 3: Transcript to Expansion
-    if check_file_exists(expansion_path):
-        print("\n✓ Expansion file already exists, skipping expansion conversion")
-    else:
-        print("\n→ Expansion file not found, will convert transcript")
-        run_transcript_to_expansion(transcript_path, expansion_path, EXPANSION_WINDOW_SIZE, EXPANSION_MODEL, EXPANSION_REASONING_EFFORT, EXPANSION_REASONING_MAX_TOKENS)
-        
-        # Verify expansion was created
-        if not check_file_exists(expansion_path):
-            print(f"\n❌ Error: Expansion file was not created at {expansion_path}")
-            sys.exit(1)
-    
-    # Pipeline complete
+    print(f"  PDFs to process    : {len(INPUT_PDFS)}")
+    print(f"  Output Dir         : {OUTPUT_DIR}")
+    print(f"  PDF→MD model       : {PDF_TO_MARKDOWN_MODEL}")
+    print(f"  Transcript model   : {TRANSCRIPT_MODEL}  (window={TRANSCRIPT_WINDOW_SIZE} lines)")
+    print(f"  Expansion model    : {EXPANSION_MODEL}  (window={EXPANSION_WINDOW_SIZE} lines)")
+    print(f"  Reasoning effort   : {EXPANSION_REASONING_EFFORT}")
+    print(f"  Reasoning max tok  : {EXPANSION_REASONING_MAX_TOKENS}")
+
+    results = {}  # pdf_path -> True/False
+
+    for i, pdf_path in enumerate(INPUT_PDFS, start=1):
+        print("\n" + "="*80)
+        print(f"PDF {i}/{len(INPUT_PDFS)}: {os.path.basename(pdf_path)}")
+        print("="*80)
+        results[pdf_path] = process_single_pdf(pdf_path)
+
+    # Final summary
     print("\n" + "="*80)
-    print("✅ PIPELINE COMPLETE!")
+    print("PIPELINE SUMMARY")
     print("="*80)
-    print(f"\nAll files ready:")
-    print(f"  📄 Markdown: {markdown_path}")
-    print(f"  🎙️  Transcript: {transcript_path}")
-    print(f"  📚 Expansion: {expansion_path}")
-    print("\nTo regenerate any file, simply delete it and run the pipeline again.")
+    succeeded = [p for p, ok in results.items() if ok]
+    failed    = [p for p, ok in results.items() if not ok]
+    for p in succeeded:
+        print(f"  ✅ {os.path.basename(p)}")
+    for p in failed:
+        print(f"  ❌ {os.path.basename(p)}")
+    print(f"\n{len(succeeded)}/{len(results)} PDFs completed successfully.")
+    if failed:
+        print("Re-run the pipeline to retry failed PDFs (or check errors above).")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,29 @@
+# Academic Paper Processing Pipeline Configuration
+
+# Input/Output paths
+# Use `input_pdfs` (list) to process multiple files in sequence.
+# Use `input_pdf` (single string) when only one file is needed.
+# If both are present, `input_pdfs` takes precedence.
+input_pdfs:
+  - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap22.pdf"
+  - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap23.pdf"
+  - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap24.pdf"
+  - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap25.pdf"
+  - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap26.pdf"
+  - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap27.pdf"
+output_dir: "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/markdowned"
+
+# Model choices (OpenRouter model identifiers)
+pdf_to_markdown_model: "anthropic/claude-haiku-4.5"
+transcript_model: "anthropic/claude-haiku-4.5"
+expansion_model: "moonshotai/kimi-k2.5"
+
+# Window sizes (number of lines per processing window)
+transcript_window_size: 50
+expansion_window_size: 100
+
+# Reasoning token configuration for expansion model
+# NOTE: OpenRouter only allows ONE of effort or max_tokens, not both.
+# Set the one you want to use, and leave the other as null.
+expansion_reasoning_effort: "high"   # "xhigh", "high", "medium", "low", "minimal", "none", or null to disable
+expansion_reasoning_max_tokens: null # Max tokens allocated for reasoning, or null to disable
