@@ -48,10 +48,11 @@ OUTPUT REQUIREMENTS:
 - If the current window contains ONLY citations, references, or other non-spoken content, return an empty string
 - If the current window is part of the works cited or references section, or part of the appendix, return an empty string
 - Maintain natural reading flow as if preparing for a voice actor
-- Do NOT exclude any substantive text from the quotations, including math or equations; expand them to spoken form instead.
+- Do NOT exclude any substantive text from the quotations, including math or equations; expand them to spoken form instead, but modified for verbal understandability. So, long equations ought to be described in terms of what they do rather than recited verbatim, unless they are simple enough to be read aloud directly.
 
 CONCISENESS:
 - Take into account explanations already provided in previous windows to avoid redundancy, but do not hesitate to re-explain crucial concepts for clarity.
 - Any repeating explanations are justifiable if complex or crucial to the main ideas of the paper.
 - Conceptually simple phrases or sentences can be left unexpanded, lumped into the quotation along with more complex parts and left unaddressed in the expansion.
 - If an explanation for multiple sentences is highly interconnected, feel free to quote them together and provide a single, cohesive expansion. Atomic, brief comments are preferred where sufficient, however, for understanding by a CS grad student.
+- Do not recite the entire contents of tables, and generally avoid repetitive or non-substantive content.

@@ -4,14 +4,12 @@
 # Use `input_pdfs` (list) to process multiple files in sequence.
 # Use `input_pdf` (single string) when only one file is needed.
 # If both are present, `input_pdfs` takes precedence.
-input_pdfs:
-  - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap22.pdf"
-  - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap23.pdf"
-  - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap24.pdf"
-  - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap25.pdf"
-  - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap26.pdf"
-  - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap27.pdf"
-output_dir: "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/markdowned"
+input_pdf: "/home/jaden/Documents/brain/704r_papers/personalize.pdf"
+# input_pdfs:
+#   - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap28.pdf"
+#   - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap29.pdf"
+#   - "/home/jaden/Documents/brain/robust_control/dynamic_systems_and_control_mit_ocw_textbook/MIT6_241JS11_chap30.pdf"
+output_dir: "/home/jaden/Documents/brain/robust_control/704r_papers/markdowned"
 
 # Model choices (OpenRouter model identifiers)
 pdf_to_markdown_model: "anthropic/claude-haiku-4.5"
